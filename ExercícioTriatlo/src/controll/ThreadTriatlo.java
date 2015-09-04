@@ -2,6 +2,8 @@ package controll;
 
 import java.util.concurrent.Semaphore;
 
+import javax.swing.JOptionPane;
+
 
 public class ThreadTriatlo extends Thread{
 
@@ -44,8 +46,13 @@ public class ThreadTriatlo extends Thread{
 		tempo =(int) (tempoFim - tempoInicio);
 		pTiro = pTiro * 1000;
 		tempo = tempo - pTiro;
+		
 		classifica[corredor][1]= corredor;
-		classifica[corredor][1]= tempo;
+		classifica[corredor][2]= tempo;
+		
+			Ordena();
+			Mostra();
+		
 		
 	}
 	private void Corrida(){
@@ -55,6 +62,7 @@ public class ThreadTriatlo extends Thread{
 			
 			int i = (int)(Math.random()*5)+20;
 			dist = dist + i;
+			System.out.println(corredor+" "+ dist);
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -107,6 +115,35 @@ public class ThreadTriatlo extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+	private void Ordena(){
+		for (int i = 0; i<5;i++){
+			for (int j = 0; j<4; i++){
+				if (classifica[i][2]>classifica[j][2]){
+					int a, b;
+					a = classifica[i][1];
+					b = classifica[i][2];
+					classifica[i][1] = classifica[j][1];
+					classifica[i][2] = classifica[j][2];
+					classifica[j][1] = a;
+					classifica[j][2] = b;
+				}
+			}
+		}
+	}
+	private void Mostra(){
+		StringBuffer buffer = new StringBuffer();
+		
+		for (int i =0;i<5;i++){
+			buffer.append("Atleta: ");
+			buffer.append(classifica[i][1]);
+			buffer.append("Tempo: ");
+			buffer.append((classifica[i][2]/1000));
+			buffer.append("s");
+			buffer.append("\n");
+		}
+		
+		JOptionPane.showMessageDialog(null, buffer.toString());
 	}
 	
 }

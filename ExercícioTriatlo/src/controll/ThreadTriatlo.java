@@ -9,6 +9,7 @@ public class ThreadTriatlo extends Thread{
 
 	long tempoInicio, tempoFim;
 	static int classifica[][] = new int[5][2];
+	static int chegada=0;
 	int corredor;
 	private Semaphore semaforo;
 	
@@ -30,29 +31,30 @@ public class ThreadTriatlo extends Thread{
 		Corrida();
 
 		//semaforo para liberar os tiros
-		try {
-				semaforo.acquire();
-				pTiro = Tiro();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}finally{
-				semaforo.release();
-			}
+//		try {
+//				semaforo.acquire();
+//				pTiro = Tiro();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}finally{
+//				semaforo.release();
+//			}
 	
 		Natação();
 		tempoFim = System.currentTimeMillis();
+		chegada++;
 		
 		tempo =(int) (tempoFim - tempoInicio);
-		pTiro = pTiro * 1000;
-		tempo = tempo - pTiro;
+//		pTiro = pTiro * 1000;
+//		tempo = tempo - pTiro;
 		
-		classifica[corredor][1]= corredor;
-		classifica[corredor][2]= tempo;
+		classifica[chegada-1][0]= corredor;
+		classifica[chegada-1][1]= tempo;
 		
-			Ordena();
+		if(chegada == 5){
+			//Ordena();
 			Mostra();
-		
+		}
 		
 	}
 	private void Corrida(){
@@ -62,7 +64,7 @@ public class ThreadTriatlo extends Thread{
 			
 			int i = (int)(Math.random()*5)+20;
 			dist = dist + i;
-			System.out.println(corredor+" "+ dist);
+			System.out.println("Corrida:"+corredor+" "+ dist);
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -108,6 +110,7 @@ public class ThreadTriatlo extends Thread{
 			
 			int i = (int)(Math.random()*4);
 			dist = dist + 10 + i;
+			System.out.println("Natação:"+corredor+" "+ dist);
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -119,30 +122,35 @@ public class ThreadTriatlo extends Thread{
 	private void Ordena(){
 		for (int i = 0; i<5;i++){
 			for (int j = 0; j<4; i++){
-				if (classifica[i][2]>classifica[j][2]){
+				if (classifica[j][1]>classifica[j+1][1]){
 					int a, b;
-					a = classifica[i][1];
-					b = classifica[i][2];
+					a = classifica[i][0];
+					b = classifica[i][1];
+					classifica[i][0] = classifica[j][0];
 					classifica[i][1] = classifica[j][1];
-					classifica[i][2] = classifica[j][2];
-					classifica[j][1] = a;
-					classifica[j][2] = b;
+					classifica[j][0] = a;
+					classifica[j][1] = b;
 				}
 			}
 		}
+		System.out.println("fim sort");
 	}
 	private void Mostra(){
 		StringBuffer buffer = new StringBuffer();
 		
 		for (int i =0;i<5;i++){
 			buffer.append("Atleta: ");
-			buffer.append(classifica[i][1]);
+			buffer.append(classifica[i][0]);
 			buffer.append("Tempo: ");
-			buffer.append((classifica[i][2]/1000));
+			double time = classifica[i][1]/1000;
+			buffer.append(time);
 			buffer.append("s");
 			buffer.append("\n");
+			System.out.println("Buffering");
 		}
 		
+		
+		System.out.println(buffer.toString());
 		JOptionPane.showMessageDialog(null, buffer.toString());
 	}
 	
